@@ -1,10 +1,29 @@
-import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
+import { NextPageContext } from "next";
+import { getSession, signOut } from "next-auth/react";
 
-const inter = Inter({ subsets: ["latin"] });
+import Navbar from "@/components/Navbar";
+import useCurrentUser from "@/hooks/useCurrentUser";
+
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession(context);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
+}
 
 export default function Home() {
-  return <h1>Netflix header</h1>;
+  const { data: user, error, isLoading, mutate } = useCurrentUser();
+  return (
+    <>
+      <Navbar />
+    </>
+  );
 }
